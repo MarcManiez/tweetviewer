@@ -13,7 +13,7 @@ import (
 
 type handler struct{}
 
-func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -71,8 +71,7 @@ func main() {
 
 	fs := http.FileServer(http.Dir("client"))
 	http.Handle("/", fs)
-	var socketHandler handler
-	http.Handle("/hey", socketHandler)
+	http.Handle("/hey", &handler{})
 	log.Println("listening...")
 	http.ListenAndServe(":3000", nil)
 }
