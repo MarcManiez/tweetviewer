@@ -54,35 +54,10 @@ func readTweets(s *twitter.Stream) {
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
 	}
-	// for message := range stream.Messages {
-	// 	// fmt.Println(message)
-	// 	go demux.Handle(message)
-	// 	fmt.Println(message)
-	// }
 	go demux.HandleChan(stream.Messages)
-	// for message := range stream.Messages {
-	// 	fmt.Println(message)
-	// }
 }
 
 func main() {
-
-	// ==================
-
-	// demux := twitter.NewSwitchDemux()
-	// demux.Tweet = func(tweet *twitter.Tweet) {
-	// 	fmt.Println(tweet.Text)
-	// }
-
-	// go demux.HandleChan(stream.Messages)
-
-	// // Wait for SIGINT and SIGTERM (HIT CTRL-C)
-	// ch := make(chan os.Signal)
-	// signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	// log.Println(<-ch)
-
-	// log.Println("Stopping Stream...")
-	// stream.Stop()
 
 	go readTweets(stream)
 
@@ -90,8 +65,8 @@ func main() {
 
 	fs := http.FileServer(http.Dir("client"))
 	http.Handle("/", fs)
-	var sokcetHandler handler
-	http.Handle("/hey", sokcetHandler)
+	var socketHandler handler
+	http.Handle("/hey", socketHandler)
 	log.Println("listening...")
 	http.ListenAndServe(":3000", nil)
 }
