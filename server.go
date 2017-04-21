@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type we struct{}
+type handler struct{}
 
 var config = oauth1.NewConfig(os.Getenv("TWITTER_API_KEY_BRANDLESS"), os.Getenv("TWITTER_API_SECRET_BRANDLESS"))
 var token = oauth1.NewToken(os.Getenv("TWITTER_TOKEN"), os.Getenv("TWITTER_SECRET"))
@@ -30,7 +30,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func (yo we) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -52,6 +52,14 @@ func (yo we) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	fs := http.FileServer(http.Dir("client"))
+	http.Handle("/", fs)
+	var sokcetHandler handler
+	http.Handle("/hey", sokcetHandler)
+	log.Println("listening...")
+	http.ListenAndServe(":3000", nil)
+
+	// ==================
 
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
@@ -68,12 +76,4 @@ func main() {
 	log.Println("Stopping Stream...")
 	stream.Stop()
 
-	// ==================
-
-	fs := http.FileServer(http.Dir("client"))
-	http.Handle("/", fs)
-	var lol we
-	http.Handle("/hey", lol)
-	log.Println("listening...")
-	http.ListenAndServe(":3000", nil)
 }
