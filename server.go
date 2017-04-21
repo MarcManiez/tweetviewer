@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +12,16 @@ import (
 	"github.com/dghubble/oauth1"
 	"github.com/gorilla/websocket"
 )
+
+func GetBytes(key interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(key)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
 
 type handler struct {
 	stream *twitter.Stream
@@ -27,18 +39,16 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
+	for message := range h.stream.Messages {
+		demux := twitter.NewSwitchDemux()
+		demux.Tweet = func(tweet *twitter.Tweet) {
+			fmt.Println(tweet.Text)
+			p := []byte(tweet.Text)
+			if err = conn.WriteMessage(1, p); err != nil {
+				log.Println(err)
+			}
 		}
-		log.Println(messageType)
-		log.Println(string(p))
-		p = []byte("hey can you read this?")
-		if err = conn.WriteMessage(messageType, p); err != nil {
-			log.Println(err)
-		}
+		demux.Handle(message)
 	}
 }
 
