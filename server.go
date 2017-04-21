@@ -54,10 +54,15 @@ func readTweets(s *twitter.Stream) {
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
 	}
-	for message := range stream.Messages {
-		// demux.Handle(message)
-		fmt.Println(message)
-	}
+	// for message := range stream.Messages {
+	// 	// fmt.Println(message)
+	// 	go demux.Handle(message)
+	// 	fmt.Println(message)
+	// }
+	go demux.HandleChan(stream.Messages)
+	// for message := range stream.Messages {
+	// 	fmt.Println(message)
+	// }
 }
 
 func main() {
