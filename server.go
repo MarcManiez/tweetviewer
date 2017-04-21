@@ -11,7 +11,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type handler struct{}
+type handler struct {
+	stream *twitter.Stream
+}
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
@@ -71,7 +73,7 @@ func main() {
 
 	fs := http.FileServer(http.Dir("client"))
 	http.Handle("/", fs)
-	http.Handle("/hey", &handler{})
+	http.Handle("/tweets", &handler{stream: stream})
 	log.Println("listening...")
 	http.ListenAndServe(":3000", nil)
 }
