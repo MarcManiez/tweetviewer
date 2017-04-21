@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -51,29 +49,44 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func readTweets(s *twitter.Stream) {
+	demux := twitter.NewSwitchDemux()
+	demux.Tweet = func(tweet *twitter.Tweet) {
+		fmt.Println(tweet.Text)
+	}
+	for message := range stream.Messages {
+		// demux.Handle(message)
+		fmt.Println(message)
+	}
+}
+
 func main() {
+
+	// ==================
+
+	// demux := twitter.NewSwitchDemux()
+	// demux.Tweet = func(tweet *twitter.Tweet) {
+	// 	fmt.Println(tweet.Text)
+	// }
+
+	// go demux.HandleChan(stream.Messages)
+
+	// // Wait for SIGINT and SIGTERM (HIT CTRL-C)
+	// ch := make(chan os.Signal)
+	// signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+	// log.Println(<-ch)
+
+	// log.Println("Stopping Stream...")
+	// stream.Stop()
+
+	go readTweets(stream)
+
+	// ==================
+
 	fs := http.FileServer(http.Dir("client"))
 	http.Handle("/", fs)
 	var sokcetHandler handler
 	http.Handle("/hey", sokcetHandler)
 	log.Println("listening...")
 	http.ListenAndServe(":3000", nil)
-
-	// ==================
-
-	demux := twitter.NewSwitchDemux()
-	demux.Tweet = func(tweet *twitter.Tweet) {
-		fmt.Println(tweet.Text)
-	}
-
-	go demux.HandleChan(stream.Messages)
-
-	// Wait for SIGINT and SIGTERM (HIT CTRL-C)
-	ch := make(chan os.Signal)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	log.Println(<-ch)
-
-	log.Println("Stopping Stream...")
-	stream.Stop()
-
 }
