@@ -4,7 +4,8 @@
   "description": "A glorified Twitter widget",
   "main": "dist/bundle.js",
   "scripts": {
-    "dev": "webpack -w"
+    "dev": "webpack -w",
+    "postinstall": "webpack"
   },
   "keywords": [],
   "author": "Marc Maniez",
