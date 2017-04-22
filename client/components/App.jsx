@@ -1,9 +1,11 @@
 import React from 'react';
 import css from '../main.css';
 
+import Timeline from './Timeline.jsx';
+
 const App = (props) => (
   <div>
-    Hello world!
+    <Timeline />
   </div>
 );
 
