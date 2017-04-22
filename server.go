@@ -67,11 +67,11 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = ":3000"
+		port = "3000"
 	}
 	log.Println(port)
 	e := http.ListenAndServe(port, nil)
-	log.Println(port)
+	log.Println(":" + port)
 	if e != nil {
 		panic(e)
 	} else {
