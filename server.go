@@ -63,5 +63,10 @@ func main() {
 	http.Handle("/", fs)
 	http.Handle("/tweets", &handler{stream: stream})
 	log.Println("listening...")
-	http.ListenAndServe(":3000", nil)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":3000"
+	}
+	http.ListenAndServe(port, nil)
 }
