@@ -2,7 +2,7 @@ import React from 'react';
 
 const Tweet = ({ tweet }) => (
   <div>
-    {tweet}
+    {tweet.text}
   </div>
 );
 
