@@ -9,7 +9,7 @@ export default class Timeline extends React.Component {
   }
 
   componentWillMount() {
-    const socket = new WebSocket('ws://localhost:3000/tweets');
+    const socket = new WebSocket(`ws${window.location.origin.slice(window.location.protocol.length)}/tweets`);
     socket.addEventListener('message', this.enqueueTweet.bind(this));
     window.onbeforeunload = () => {
       socket.onclose = () => {};
