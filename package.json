@@ -4,6 +4,7 @@
   "description": "A glorified Twitter widget",
   "main": "dist/bundle.js",
   "scripts": {
+    "start": "",
     "dev": "webpack -w",
     "postinstall": "webpack"
   },
