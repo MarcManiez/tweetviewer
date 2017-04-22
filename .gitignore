@@ -1,0 +1,17 @@
+# node modules
+
+node_modules
+
+# VS Code config files
+
+.vscode
+
+# compiled files
+
+client/compiled
+dist
+
+# build artifacts
+
+npm-debug.log
+.DS_Store
