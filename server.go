@@ -68,5 +68,8 @@ func main() {
 	if port == "" {
 		port = ":3000"
 	}
-	http.ListenAndServe(port, nil)
+	e := http.ListenAndServe(port, nil)
+	if e != nil {
+		panic(e)
+	}
 }
