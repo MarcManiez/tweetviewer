@@ -59,6 +59,7 @@ func main() {
 		panic(err)
 	}
 
+	log.Println("Control flow...")
 	fs := http.FileServer(http.Dir("dist"))
 	http.Handle("/", fs)
 	http.Handle("/tweets", &handler{stream: stream})
