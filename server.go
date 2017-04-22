@@ -59,7 +59,6 @@ func main() {
 		panic(err)
 	}
 
-	log.Println("Control flow...")
 	fs := http.FileServer(http.Dir("dist"))
 	http.Handle("/", fs)
 	http.Handle("/tweets", &handler{stream: stream})
@@ -70,8 +69,8 @@ func main() {
 		port = "3000"
 	}
 	log.Println(port)
-	e := http.ListenAndServe(port, nil)
-	log.Println(":" + port)
+	e := http.ListenAndServe(":"+port, nil)
+	log.Println(port)
 	if e != nil {
 		panic(e)
 	} else {
