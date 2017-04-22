@@ -4,7 +4,7 @@
   "description": "A glorified Twitter widget",
   "main": "dist/bundle.js",
   "scripts": {
-    "start": "go run server.go",
+    "start": "./server",
     "dev": "webpack -w",
     "postinstall": "webpack"
   },
