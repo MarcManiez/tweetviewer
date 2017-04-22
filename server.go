@@ -63,7 +63,6 @@ func main() {
 	http.Handle("/", fs)
 	http.Handle("/tweets", &handler{stream: stream})
 	log.Println("listening...")
-	log.Println(http.Dir("dist"))
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -71,8 +70,8 @@ func main() {
 	}
 	e := http.ListenAndServe(":"+port, nil)
 	if e != nil {
-		panic(e)
-	} else {
+		log.Println(http.Dir("dist"))
 		log.Println(port)
+		panic(e)
 	}
 }
