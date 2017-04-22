@@ -1,11 +1,12 @@
 import React from 'react';
 
 import Tweet from './Tweet.jsx';
+import sample from '../twitterSample';
 
 export default class Timeline extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tweets: [] };
+    this.state = { tweets: [sample] };
   }
 
   componentWillMount() {
