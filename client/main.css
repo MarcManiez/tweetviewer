@@ -1,5 +1,5 @@
 body {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 section .tweet-module {
@@ -14,7 +14,6 @@ textarea {
   resize: none;
   width: 600px;
   height: 50px;
-  /*margin-right: 5px;*/
 }
 
 .tweet-counter {
@@ -63,10 +62,6 @@ button:hover{
 
 time {
   padding: 0 0 0 3px;
-}
-
-.text {
-
 }
 
 .timeline {
