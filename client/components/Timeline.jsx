@@ -11,16 +11,21 @@ export default class Timeline extends React.Component {
   componentWillMount() {
     const socket = new WebSocket('ws://localhost:3000/tweets');
     socket.addEventListener('message', this.enqueueTweet.bind(this));
+    window.onbeforeunload = () => {
+      socket.onclose = () => {};
+      socket.close();
+    }
   }
 
   enqueueTweet(event) {
+    const tweet = JSON.parse(event.data);
+    console.log('Message from server', tweet);
     const tweets = this.state.tweets.slice();
     if (tweets.length >= 10) {
       tweets.pop();
     }
-    tweets.unshift(event.data);
+    tweets.unshift(tweet);
     this.setState(() => ({ tweets }));
-    console.log('Message from server', event.data);
   }
 
   render() {
