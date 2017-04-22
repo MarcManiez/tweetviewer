@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -49,14 +48,6 @@ func getStream(params *twitter.StreamFilterParams) (*twitter.Stream, error) {
 	return client.Streams.Filter(params)
 }
 
-func readTweets(s *twitter.Stream) {
-	demux := twitter.NewSwitchDemux()
-	demux.Tweet = func(tweet *twitter.Tweet) {
-		fmt.Println(tweet.Text)
-	}
-	go demux.HandleChan(s.Messages)
-}
-
 func main() {
 	params := &twitter.StreamFilterParams{
 		Track:         []string{"brands && advertising", "consumerism"},
@@ -67,8 +58,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	// ==================
 
 	fs := http.FileServer(http.Dir("dist"))
 	http.Handle("/", fs)
