@@ -70,7 +70,7 @@ func main() {
 
 	// ==================
 
-	fs := http.FileServer(http.Dir("client"))
+	fs := http.FileServer(http.Dir("dist"))
 	http.Handle("/", fs)
 	http.Handle("/tweets", &handler{stream: stream})
 	log.Println("listening...")
