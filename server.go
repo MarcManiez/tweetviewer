@@ -68,8 +68,12 @@ func main() {
 	if port == "" {
 		port = ":3000"
 	}
+	log.Println(port)
 	e := http.ListenAndServe(port, nil)
+	log.Println(port)
 	if e != nil {
 		panic(e)
+	} else {
+		log.Println(port)
 	}
 }
