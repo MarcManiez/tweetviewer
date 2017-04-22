@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"encoding/json"
+
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/gorilla/websocket"
@@ -28,15 +30,14 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for message := range h.stream.Messages {
-		demux := twitter.NewSwitchDemux()
-		demux.Tweet = func(tweet *twitter.Tweet) {
-			fmt.Println(tweet.Text)
-			p := []byte(tweet.Text)
-			if err = conn.WriteMessage(1, p); err != nil {
-				log.Println(err)
-			}
+		p, err := json.Marshal(message)
+		log.Println(p)
+		if err != nil {
+			log.Println(err)
 		}
-		demux.Handle(message)
+		if err = conn.WriteMessage(1, p); err != nil {
+			log.Println(err)
+		}
 	}
 }
 
@@ -66,7 +67,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	go readTweets(stream)
 
 	// ==================
 
