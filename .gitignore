@@ -15,7 +15,3 @@ dist
 
 npm-debug.log
 .DS_Store
-
-# Godep vendor folder
-
-vendor/*/
