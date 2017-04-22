@@ -17,11 +17,13 @@ export default class Timeline extends React.Component {
     });
 
     socket.addEventListener('message', (event) => {
+      const tweets = this.state.tweets.slice();
       console.log(this.state.tweets);
-      if (this.state.tweets.length > 10) {
-        this.state.tweets.pop();
+      if (tweets.length > 10) {
+        tweets.pop();
       }
-      this.state.tweets.unshift(event.data);
+      tweets.unshift(event.data);
+      this.setState(() => ({ tweets }));
       console.log('Message from server', event.data);
     });
   }
