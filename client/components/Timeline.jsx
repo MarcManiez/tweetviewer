@@ -15,7 +15,7 @@ export default class Timeline extends React.Component {
     window.onbeforeunload = () => {
       socket.onclose = () => {};
       socket.close();
-    }
+    };
   }
 
   enqueueTweet(event) {
@@ -34,6 +34,6 @@ export default class Timeline extends React.Component {
       <div>
         {this.state.tweets.map((tweet, index) => <Tweet tweet={tweet} key={index} />)}
       </div>
-    )
+    );
   }
 }
