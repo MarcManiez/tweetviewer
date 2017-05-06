@@ -1,11 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
-
-	"encoding/json"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -13,7 +12,8 @@ import (
 )
 
 type handler struct {
-	stream *twitter.Stream
+	stream      *twitter.Stream
+	connections []*websocket.Conn
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -28,13 +28,26 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
+	h.connections = append(h.connections, conn)
+	log.Println(h.connections)
+}
+
+func (h *handler) consumeStream() {
 	for message := range h.stream.Messages {
+		log.Println("Tweet:", message)
 		p, err := json.Marshal(message)
-		log.Println(p)
+		h.fanTweets(p, h.connections)
 		if err != nil {
-			log.Println(err)
+			log.Println("Marshall error:", err)
 		}
-		if err = conn.WriteMessage(1, p); err != nil {
+	}
+}
+
+func (h *handler) fanTweets(tweet []byte, connections []*websocket.Conn) {
+	for _, conn := range connections {
+		if err := conn.WriteMessage(1, tweet); err != nil {
+			log.Println("Write error:", err)
 			log.Println(err)
 		}
 	}
@@ -49,8 +62,9 @@ func getStream(params *twitter.StreamFilterParams) (*twitter.Stream, error) {
 }
 
 func main() {
+
 	params := &twitter.StreamFilterParams{
-		Track:         []string{"brands && advertising", "consumerism"},
+		Track:         []string{"brands && advertising", "consumerism", "#javascript"},
 		Follow:        []string{"12480582", "22151553", "267399199", "308452020", "17540485", "26787673", "713033114092761088", "21778607", "21778607", "485071945", "138845026", "23085995", "570715775", "109224937", "17137891", "17475575", "280557152", "2874230781", "17899654", "534249758", "92793164", "2347131241", "12405142", "19720440", "19720019", "57013560", "398942686", "831488280", "213299248", "126084292", "51119925", "31143489", "347958019", "71026122", "151913390", "20758087", "20094535", "92294003"},
 		StallWarnings: twitter.Bool(true),
 	}
@@ -59,9 +73,14 @@ func main() {
 		panic(err)
 	}
 
+	connections := make([]*websocket.Conn, 0)
+	tweetHandler := &handler{stream: stream, connections: connections}
+
+	go tweetHandler.consumeStream()
+
 	fs := http.FileServer(http.Dir("dist"))
 	http.Handle("/", fs)
-	http.Handle("/tweets", &handler{stream: stream})
+	http.Handle("/tweets", tweetHandler)
 	log.Println("listening...")
 
 	port := os.Getenv("PORT")
