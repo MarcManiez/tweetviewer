@@ -37,14 +37,14 @@ func (h *handler) consumeStream() {
 	for message := range h.stream.Messages {
 		log.Println("Tweet:", message)
 		p, err := json.Marshal(message)
-		h.fanTweets(p, h.connections)
+		fanTweets(p, h.connections)
 		if err != nil {
 			log.Println("Marshall error:", err)
 		}
 	}
 }
 
-func (h *handler) fanTweets(tweet []byte, connections []*websocket.Conn) {
+func fanTweets(tweet []byte, connections []*websocket.Conn) {
 	for _, conn := range connections {
 		if err := conn.WriteMessage(1, tweet); err != nil {
 			log.Println("Write error:", err)
